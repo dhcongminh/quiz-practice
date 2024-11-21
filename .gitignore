@@ -1,0 +1,97 @@
+## Windows ##
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer Package files
+*.exe
+*.dll
+*.pdb
+
+## ASP.NET ##
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# ASP.NET temporary files
+bin/
+obj/
+
+# IIS Express
+.iisexpress/
+
+# ASP.NET Core HTTPS development certificate
+https://github.com/aspnet/Docs/issues/7348
+https://github.com/aspnet/Docs/issues/12969
+# If you are using ASP.NET Core, exclude dev cert files.
+# C:\Users\<username>\AppData\Roaming\ASP.NET\Https
+# key.pfx
+# key.pem
+
+# ASP.NET Core specific
+project.lock.json
+project.fragment.lock.json
+
+## Node.js ##
+node_modules/
+npm-debug.log
+
+## .NET ##
+# .NET Core / .NET 5+
+# Exclude the bin and obj folders for all projects
+bin/
+obj/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]Release/
+[Dd]ReleasePublic/
+
+# User-specific files
+.vs2019/
+.vs2017/
+.vs/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# JetBrains Rider
+.idea/
+
+# User-specific files (Windows)
+.vscode/
+.vs/
+
+# Rider-specific files
+.idea/
+
+# ReSharper
+_ReSharper.Caches/
+
+# ASP.NET Core development certificate
+# Temporary ASP.NET Files
+Temp/
+
+# Microsoft Visual Studio for Mac
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# ASP.NET Core Files
+appsettings.json
+appsettings.Development.json
+
+# Azure
+.vscode/
