@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using QuizPracticeApi.Helpers;
 using QuizPracticeApi.Services;
 
 namespace QuizPracticeApi.Controllers {
@@ -15,19 +16,27 @@ namespace QuizPracticeApi.Controllers {
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserDto userDto) {
-
             return Ok(_userServices.Register(userDto));
         }
 
-        [HttpGet]
-        [Authorize]
-        public IActionResult GetAll() {
-            return Ok(_userServices.GetAll());
+        [HttpGet("login")]
+        public IActionResult Login(string username, string password) {
+            return Ok(_userServices.Login(username, password));
         }
 
-        [HttpGet("{username}")]
+        [HttpPut("activate")]
+        public IActionResult Activate(string token, string username) {
+            return Ok(_userServices.Activate(token, username));
+        }
+
+
+        [HttpGet]
         [Authorize]
         public IActionResult GetByUsername(string username) {
+            var usernameClaim = User?.FindFirst("username")?.Value;
+            if (usernameClaim != username) {
+                return Forbid();
+            }
             return Ok(_userServices.GetByUsername(username));
         }
     }
