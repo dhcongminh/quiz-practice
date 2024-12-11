@@ -15,7 +15,7 @@ namespace QuizPracticeApi.Services {
             _configuration = configuration;
         }
 
-        public Response Register(UserDto userDto) {
+        public dynamic Register(UserDto userDto) {
             Response response = new Response();
             UserDto? usernameCheck = GetByUsername(userDto.Username);
             if (usernameCheck != null) {
@@ -29,6 +29,7 @@ namespace QuizPracticeApi.Services {
                 User user = _mapper.Map<User>(userDto);
                 user.Id = 0;
                 user.CreatedAt = DateTime.Now;
+                user.Password = EncryptionHelper.Base64Encode(userDto.Password);
                 if (string.IsNullOrEmpty(user.UserDetail.Avatar)) {
                     user.UserDetail.Avatar = string.Format("https://ui-avatars.com/api/?name={0}+{1}", userDto.FirstName, userDto.LastName);
                 }
@@ -37,9 +38,42 @@ namespace QuizPracticeApi.Services {
                     _context.Users.Add(user);
                     _context.SaveChanges();
                     response.User = _mapper.Map<UserDto>(user);
-                    response.Token = JwtTokenHelper.GenerateToken(_mapper.Map<User>(userDto), _configuration);
+                    response.Token = EncryptionHelper.GenerateActivateToken(userDto.Username, _configuration);
                 } catch (Exception ex) {
                     response.Errors.Add($"{ex}");
+                }
+            }
+            return response;
+        }
+
+        public Response Login(string username, string password) {
+            var response = new Response();
+            User? user = _context.Users
+                .Include(u => u.UserDetail)
+                .FirstOrDefault(u => u.Username == username && u.Password == EncryptionHelper.Base64Encode(password));
+            if (user == null) {
+                response.Errors.Add("Username or password is incorrect.");
+            } else {
+                response.User = _mapper.Map<UserDto>(user);
+                response.Token = GenerateToken(user);
+            }
+            return response;
+        }
+        public Response Activate(string token, string username) {
+            var response = new Response();
+            User? user = _context.Users
+                .Include(u => u.UserDetail)
+                .FirstOrDefault(u => u.Username == username);
+            if (user == null) {
+                response.Errors.Add("Username does not exists in the system.");
+            } else {
+                var isValid = EncryptionHelper.ValidateActivateToken(token, username, _configuration);
+                if (isValid) {
+                    user.Status = 1;
+                    _context.Users.Update(user);
+                    _context.SaveChanges();
+                } else {
+                    response.Errors.Add("Token is invalid or expired.");
                 }
             }
             return response;
@@ -64,6 +98,10 @@ namespace QuizPracticeApi.Services {
                 .Include(u => u.UserDetail)
                 .ToList();
             return _mapper.Map<List<UserDto>>(users);
+        }
+
+        private string GenerateToken(User user) {
+            return JwtTokenHelper.GenerateToken(user, _configuration);
         }
 
     }
